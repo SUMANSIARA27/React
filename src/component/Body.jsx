@@ -1,104 +1,69 @@
 import RestaurantCard from "./RestaurantCard";
-import { Restaurants } from "../../utils/MockData";
-import { useState } from "react";
-
-
+import { useEffect, useState } from "react";
 
 const Body = () => {
-  const [listOfRestaurant,setListOfRestaurant] = useState([  {
-    info: {
-      id: "263485",
-      name: "Chaayos Chai+Snacks=Relax",
-      cloudinaryImageId:
-        "RX_THUMBNAIL/IMAGES/VENDOR/2024/4/17/dfbcecfc-b380-4648-930a-b9b56b21e781_263485.JPG",
-      locality: "Kormangala 8th Block",
-      areaName: "Kormangala",
-      costForTwo: "₹250 for two",
-      cuisines: [
-        "Bakery",
-        "Beverages",
-        "Chaat",
-        "Desserts",
-        "Home Food",
-        "Italian",
-        "Maharashtrian",
-        "Snacks",
-        "Street Food",
-        "Sweets",
-      ],
-      avgRating: 4.5,
-      parentId: "281782",
-      avgRatingString: "4.5",
-      totalRatingsString: "5.8K+",
-    },
-  },
-  {
-    info: {
-      id: "263486",
-      name: "Chaayos Chai+Snacks=Relax",
-      cloudinaryImageId:
-        "RX_THUMBNAIL/IMAGES/VENDOR/2024/4/17/dfbcecfc-b380-4648-930a-b9b56b21e781_263485.JPG",
-      locality: "Kormangala 8th Block",
-      areaName: "Kormangala",
-      costForTwo: "₹250 for two",
-      cuisines: [
-        "Bakery",
-        "Beverages",
-        "Chaat",
-        "Desserts",
-        "Home Food",
-        "Italian",
-        "Maharashtrian",
-        "Snacks",
-        "Street Food",
-        "Sweets",
-      ],
-      avgRating: 4.6,
-      parentId: "281782",
-      avgRatingString: "4.5",
-      totalRatingsString: "5.8K+",
-    },
-  },
-  {
-    info: {
-      id: "263487",
-      name: "Chaayos Chai+Snacks=Relax",
-      cloudinaryImageId:
-        "RX_THUMBNAIL/IMAGES/VENDOR/2024/4/17/dfbcecfc-b380-4648-930a-b9b56b21e781_263485.JPG",
-      locality: "Kormangala 8th Block",
-      areaName: "Kormangala",
-      costForTwo: "₹250 for two",
-      cuisines: [
-        "Bakery",
-        "Beverages",
-        "Chaat",
-        "Desserts",
-        "Home Food",
-        "Italian",
-        "Maharashtrian",
-        "Snacks",
-        "Street Food",
-        "Sweets",
-      ],
-      avgRating: 3.5,
-      parentId: "281782",
-      avgRatingString: "4.5",
-      totalRatingsString: "5.8K+",
-    },
-  },])
+  const [listOfRestaurant, setListOfRestaurant] = useState([]);
+  const [filteredRestaurant, setFilteredRestaurant] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  console.log(listOfRestaurant);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    const data = await fetch(
+      "https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.9352403&lng=77.624532&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING",
+    );
+    const json = await data.json();
+    const restaurantCard = json?.data?.cards?.find(
+      (item) => item?.card?.card?.id === "restaurant_grid_listing_v2",
+    );
+
+    const restaurants =
+      restaurantCard?.card?.card?.gridElements?.infoWithStyle?.restaurants ??
+      [];
+
+    setListOfRestaurant(restaurants);
+    setFilteredRestaurant(restaurants);
+  };
+
+  if (listOfRestaurant.length === 0) {
+    return <h1>Loading........</h1>;
+  }
+
   return (
     <div className="body">
       <div className="search-container">
-        <button onClick={() => {const topRes = listOfRestaurant.filter((res)=>res.info.avgRating>4);
-          setListOfRestaurant(topRes)
-          console.log(topRes);
-          
-        }}>
+        <input
+          type="search"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+        />
+        <button
+          onClick={(e) => {
+            const filteredRestaurant = listOfRestaurant.filter((res) =>
+              res.info.name.toLowerCase().includes(searchText.toLowerCase()),
+            );
+            setFilteredRestaurant(filteredRestaurant);
+          }}
+        >
+          Search
+        </button>
+        <button
+          onClick={() => {
+            const topRes = listOfRestaurant.filter(
+              (res) => res.info.avgRating > 4.5,
+            );
+            setFilteredRestaurant(topRes);
+            console.log(topRes);
+          }}
+        >
           Top Rated Restaurant
         </button>
       </div>
       <div className="res-container">
-        {listOfRestaurant.map((res) => (
+        {filteredRestaurant.map((res) => (
           <RestaurantCard resData={res} key={res.info.id} />
         ))}
       </div>
