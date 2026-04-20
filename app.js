@@ -1,13 +1,34 @@
-const parent = React.createElement(
-  "div",
-  { id: "parent" },
-  React.createElement(
-    "div",
-    { id: "child" },
-    React.createElement("h1", {}, "I,am H1 TAG"),
-  ),
-);
+import React from "react";
+import ReactDOM from "react-dom/client";
+import Header from "./src/component/Header";
+import Body from "./src/component/Body";
+import Footer from "./src/component/Footer";
 
-const heading = React.createElement("h1", { id: "heading" }, "Hello World!");
+/* Components of Our Food-Order App
+ * Header
+ * - Logo
+ * - Nav Items
+ * Body
+ * - Search Bar
+ * - Restaurant-Container
+ *  - Restaurant-Card
+ *    - Img
+ *    - Name of Res, Star Rating, cuisine, delivery time.
+ * Footer
+ * - Copyright
+ * - Links
+ * - Address
+ * - Contact
+ */
+const AppLayout = () => {
+  return (
+    <div className="app">
+      <Header />
+       <Body/>
+      <Footer/>
+    </div>
+  );
+};
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(parent);
+root.render(<AppLayout />);
