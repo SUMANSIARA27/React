@@ -1,1 +1,1 @@
-Nameste REACT 🐱‍🏍
+REACT 🐱‍🏍
